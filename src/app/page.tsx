@@ -1,8 +1,26 @@
+"use client"
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
-import Image from "next/image";
+import { useState } from "react";
+
+
+const SORT_OPTIONS = [
+  {name: "None", value: "none"},
+  {name: "Price: Low to High", value: "price-asc"},
+  {name: "Price: High to Low", value: "price-desc"},
+] as const;
+
+
+
+
 
 export default function Home() {
+  const  [ filter, setFilter ] = useState({
+    sort: 'none',
+  });
+
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
@@ -17,9 +35,26 @@ export default function Home() {
               <ChevronDown className="-mr-1 ml-1 size-5  flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-
+              {SORT_OPTIONS.map((option) => (
+                <button 
+                  className={cn("text-left w-full block px-4 py-2 text-sm", {
+                    "text-gray-500": filter.sort !== option.value,
+                    "text-gray-900 bg-gray-100": filter.sort === option.value,
+                  })}
+                  key={option.name} 
+                  onClick={() => {
+                  setFilter({
+                   ...filter,
+                    sort: option.value,
+                  });
+                }}>
+                  {option.name}
+                </button>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <button className="-m-2 ml-4 p-2 text-gray-500 hover:text-gray-500 sm:ml-6"></button>
         </div>
       </div>
     </main>
