@@ -1,8 +1,8 @@
 "use client"
 
-import Product from "@/components/product";
+import { Product } from "@/components/product";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Product, Product, Product, Product } from "@/db";
+import { Product as ProductType } from "@/db";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { QueryResult } from "@upstash/vector";
@@ -30,7 +30,7 @@ export default function Home() {
   const { data: products } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const { data } = await axios.post<QueryResult<Product>[]>('http://localhost:3000/api/products', {
+      const { data } = await axios.post<QueryResult<ProductType>[]>('http://localhost:3000/api/products', {
         filter: {
           sort: filter.sort,
         }
@@ -86,7 +86,7 @@ export default function Home() {
                 {products?.map((product) => (
                   <Product 
                     key={product.id} 
-
+                    product={product}
                   />
                 ))}
               </ul>
