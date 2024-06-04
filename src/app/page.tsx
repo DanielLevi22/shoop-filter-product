@@ -11,6 +11,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Product as ProductType } from "@/db";
 import { cn } from "@/lib/utils";
+import { ProductState } from "@/lib/validators/product-validor";
 import { useQuery } from "@tanstack/react-query";
 import { QueryResult } from "@upstash/vector";
 import axios from "axios";
@@ -30,6 +31,16 @@ const SUBCATEGORIES = [
   {name: "Accessories", selected: false,href: "#"},
 ] as const;
 
+const SIZE_FILTERS = {
+  id:  "size",
+  name: "Size",
+  options: [
+    {name: "S", value: "s"},
+    {name: "M", value: "m"},
+    {name: "L", value: "l"},
+  ] as const
+}
+
 const COLOR_FILTERS = {
   id:  "color",
   name: "Color",
@@ -42,10 +53,26 @@ const COLOR_FILTERS = {
   ] as const
 }
 
-
-
+const PRICE_FILTERS = {
+  id: "price",
+  name: "Price",
+  option: [{value: [0,100], label: "Any price"}, 
+  {
+    value: [0,20],
+    label: "Under 20"
+  },
+  {
+    value: [0,20],
+    label: "Under 40"
+  }
+]
+}
+const DEFAUL_CUSTOM_PRICE = [0,100] as [number, number]
 export default function Home() {
-  const  [ filter, setFilter ] = useState({
+  const  [ filter, setFilter ] = useState<ProductState>({
+    color: ["beige","blue", "green", "purple", "white"],
+    price: {isCustom: false, ranger:DEFAUL_CUSTOM_PRICE},
+    size: ["L", "M", "S"],
     sort: 'none',
   });
 
@@ -63,6 +90,27 @@ export default function Home() {
   })
 
 
+  const applyArrayFilter = ({
+    category, value
+  }: {
+    category: keyof Omit<typeof filter, "price"| "sort">
+    value: string
+  }) => {
+    const isFilterApplied = filter[category].includes(value as never)
+    if(isFilterApplied) {
+      setFilter((prev) => ({
+        ...prev,
+        [category]: prev[category].filter((v) => v !== value)
+      }))
+    }else {
+      setFilter((prev) => ({
+        ...prev,
+        [category]:[...prev[category], value]
+      }))
+    }
+  }
+
+  console.log(filter)
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
@@ -124,11 +172,79 @@ export default function Home() {
                         {COLOR_FILTERS.options.map((option, i) => (
                           <li key={option.value} className="flex items-center">
                             <input  
+                              onChange={() => {
+                                applyArrayFilter({
+                                  category: "color",
+                                  value: option.value
+                                })
+                              }}
+                              checked={filter.color.includes(option.value)}
                               type="checkbox" 
                               id={`color-${i}`}
                               className="size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <label htmlFor={`color-${i}`} className="ml-3 text-sm text-gray-600">
+                              {option.name}
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="size">
+                    <AccordionTrigger className="py-3 text-sm text-gray-400 hover:text-gray-500">
+                      <span className="font-medium text-gray-900">Size</span>
+                    </AccordionTrigger>
+
+                    <AccordionContent>
+                      <ul className="space-y-4">
+                        {SIZE_FILTERS.options.map((option, i) => (
+                          <li key={option.value} className="flex items-center">
+                            <input  
+                              onChange={() => {
+                                applyArrayFilter({
+                                  category: "size",
+                                  value: option.name
+                                })
+                              }}
+                              checked={filter.size.includes(option.name)}
+                              type="checkbox" 
+                              id={`size-${i}`}
+                              className="size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <label htmlFor={`size-${i}`} className="ml-3 text-sm text-gray-600">
+                              {option.name}
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+
+
+                  <AccordionItem value="price">
+                    <AccordionTrigger className="py-3 text-sm text-gray-400 hover:text-gray-500">
+                      <span className="font-medium text-gray-900">Price</span>
+                    </AccordionTrigger>
+
+                    <AccordionContent>
+                      <ul className="space-y-4">
+                        {SIZE_FILTERS.options.map((option, i) => (
+                          <li key={option.value} className="flex items-center">
+                            <input  
+                              onChange={() => {
+                                applyArrayFilter({
+                                  category: "size",
+                                  value: option.name
+                                })
+                              }}
+                              checked={filter.size.includes(option.name)}
+                              type="checkbox" 
+                              id={`size-${i}`}
+                              className="size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <label htmlFor={`size-${i}`} className="ml-3 text-sm text-gray-600">
                               {option.name}
                             </label>
                           </li>
