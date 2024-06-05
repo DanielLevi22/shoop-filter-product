@@ -19,6 +19,7 @@ import axios from "axios";
 import { ChevronDown, Filter } from "lucide-react";
 import { useCallback, useState } from "react";
 import debounce from 'lodash.debounce'
+import { EmptyState } from "@/components/ui/emptyState";
 
 const SORT_OPTIONS = [
   { name: 'None', value: 'none' },
@@ -191,7 +192,7 @@ export default function Home() {
             </ul>
 
             <Accordion type='multiple' className='animate-none'>
-              {/* Color filter */}
+            
               <AccordionItem value='color'>
                 <AccordionTrigger className='py-3 text-sm text-gray-400 hover:text-gray-500'>
                   <span className='font-medium text-gray-900'>Color</span>
@@ -224,7 +225,6 @@ export default function Home() {
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Size filters */}
               <AccordionItem value='size'>
                 <AccordionTrigger className='py-3 text-sm text-gray-400 hover:text-gray-500'>
                   <span className='font-medium text-gray-900'>Size</span>
@@ -257,7 +257,7 @@ export default function Home() {
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Price filter */}
+   
               <AccordionItem value='price'>
                 <AccordionTrigger className='py-3 text-sm text-gray-400 hover:text-gray-500'>
                   <span className='font-medium text-gray-900'>Price</span>
@@ -370,11 +370,9 @@ export default function Home() {
             </Accordion>
           </div>
 
-          {/* Product grid */}
           <ul className='lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8'>
             {products && products.length === 0 ? (
-              // <EmptyState />
-             <p>hi</p>
+              <EmptyState />
             ) : products ? (
               products.map((product) => <Product key={product.id} product={product.metadata!} />)
             ) : (
