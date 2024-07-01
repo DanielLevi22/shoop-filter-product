@@ -19,7 +19,7 @@ import axios from "axios";
 import { ChevronDown, Filter } from "lucide-react";
 import { useCallback, useState } from "react";
 import debounce from 'lodash.debounce'
-import { EmptyState } from "@/components/ui/emptyState";
+import { EmptyState } from "@/components/ui/emptystate";
 
 const SORT_OPTIONS = [
   { name: 'None', value: 'none' },
@@ -62,7 +62,6 @@ const PRICE_FILTERS = {
       value: [0, 40],
       label: 'Under 40€',
     },
-    // custom option defined in JSX
   ],
 } as const
 
